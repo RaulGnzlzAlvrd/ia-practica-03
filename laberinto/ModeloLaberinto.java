@@ -50,39 +50,36 @@ public class ModeloLaberinto {
 				laberinto[y][x].setVecinos(vecinos);
 			}
 		}
-		System.out.println(this);
+		int rndX = rnd.nextInt(ancho);
+		int rndY = rnd.nextInt(alto);
+		stack.push(laberinto[rndY][rndX]);
 	}
 
 	/**
-	 * Realiza un solo paso en la generación del laberinto
+	 * Realiza un solo paso en la generación del laberinto, y regresa la Celda en el tope del stack
+	 * @return La Celda al tope de stack al iniciar la función 
 	 */
-	void generaSiguiente() {
+	Celda generaSiguiente() {
 		if (finalizado)
-			return;
-
-		if(stack.isEmpty()) {
-			int rndX = rnd.nextInt(ancho);
-			int rndY = rnd.nextInt(alto);
-			stack.push(laberinto[rndY][rndX]);
-		}
+			return null;
 
 		Celda actual = stack.peek();
-		Celda siguiente = actual.obtenVecinoRandom();
+		Celda siguiente = actual.getVecinoNoExploradoRandom();
 		if (siguiente != null) {
 			actual.estado = Celda.EXPLORADO;
 			eliminaFrontera(actual, siguiente);
-			actual.eliminarDeVecinos();
+			actual.eliminarDeVecinosNoExplorados();
 			actual.vecinosNoExplorados.remove(siguiente);
 			stack.push(siguiente);
 		} else {
 			actual.estado = Celda.TERMINADO;
-			actual.eliminarDeVecinos();
+			actual.eliminarDeVecinosNoExplorados();
 			stack.pop();
 			finalizado = stack.isEmpty();
 			if(finalizado)
 				System.out.println("TERMINADO!");
 		}
-		System.out.println(this);
+		return actual;
 	}
 
 	/**
@@ -107,8 +104,6 @@ public class ModeloLaberinto {
 				celda1.paredD = false;
 				celda2.paredI = false;
 				break;
-			default:
-				System.out.println("Algo salio mal al eliminar paredes, celdas no adyacentes");
 		}
 	}
 
@@ -210,7 +205,7 @@ public class ModeloLaberinto {
        	 *
        	 * @return Celda con un vecino al azar o null
        	 */
-       	Celda obtenVecinoRandom() {
+       	Celda getVecinoNoExploradoRandom() {
        		if(vecinosNoExplorados.isEmpty())
        			return null;
        		int tamanio = vecinosNoExplorados.size();
@@ -240,7 +235,7 @@ public class ModeloLaberinto {
    		/**
    		 * Se elimina la celda (this) de la lista de vecinos no explorados de los vecinos reales de la celda (this) 
    		 */
-   		void eliminarDeVecinos() {
+   		void eliminarDeVecinosNoExplorados() {
    			for (Celda vecino : vecinos) {
    				vecino.vecinosNoExplorados.remove(this);
    			}

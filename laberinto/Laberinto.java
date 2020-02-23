@@ -5,10 +5,10 @@ import java.awt.Color;
 import laberinto.ModeloLaberinto.Celda;
 
 public class Laberinto extends PApplet {
+	int ancho = 25; // Cantidad de celdas a lo ancho del laberinto
+	int alto = 25; // Cantidad de celdas a lo alto del laberinto
+
 	int tamanioCelda = 20; // Tamaño en pixeles de cada celda del laberinto
-	int ancho = 20; // Cantidad de celdas a lo ancho del laberinto
-	int alto = 20; // Cantidad de celdas a lo alto del laberinto
-	float fr = 30.0f; // Framerate de la ventana
 
 	boolean inicializado = false;
 	ModeloLaberinto modeloLaberinto;
@@ -21,7 +21,7 @@ public class Laberinto extends PApplet {
 	@Override
 	public void setup() {
 		modeloLaberinto = new ModeloLaberinto(ancho, alto);
-		frameRate(fr);
+		frameRate(60);
 	}
 	
 	@Override
@@ -33,8 +33,8 @@ public class Laberinto extends PApplet {
 		}
 		// Dibuja el laberinto en cada paso de generacion
 		if (!modeloLaberinto.finalizado){
-			modeloLaberinto.generaSiguiente();
-			dibujaLaberinto();
+			Celda actual = modeloLaberinto.generaSiguiente();
+			dibujaCelda(actual.celdaX, actual.celdaY);
 		}
 	}
 
